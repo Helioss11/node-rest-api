@@ -1,30 +1,17 @@
 require('./config/config');
+const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 
+mongoose.connect('mongodb://localhost:27017/cafe', (err, res) => {
+  if(err) throw err;
+  console.log('Conectado a mongo');
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(require('./routes/usuario'));
 
- app.get('/usuario', (req, res) => {
-   res.json('get Hello world');
- });
-
- app.post('/usuario', (req, res) => {
-  res.json('post Hello world');
+app.listen(process.env.PORT, () => {
+  console.log(`Escuchando en el puerto: ${process.env.PORT}`);
 });
-
-app.put('/usuario/:id', (req, res) => {
-  let id = req.params.id;
-  res.json({
-    id,
-    ...req.body
-  });
-});
-
-app.delete('/usuario/:id', (req, res) => {
-  res.json('delete Hello world');
-});
-
- app.listen(process.env.PORT, () => {
-   console.log(`Escuchando en el puerto: ${process.env.PORT}`);
- });
