@@ -1,12 +1,13 @@
 require('./config/config');
 const mongoose = require('mongoose');
 const express = require('express');
+
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/cafe', (err, res) => {
-  if(err) throw err;
-  console.log('Conectado a mongo');
-});
+const uri = 'mongodb://localhost:27017/cafe';
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.createConnection(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
