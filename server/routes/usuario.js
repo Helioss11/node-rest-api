@@ -8,23 +8,28 @@ app.get('/usuario', async (req, res) => {
   
   let desde = parseInt(req.query.desde) || 0;
   let limite = parseInt(req.query.limite) || 5;
+  let estado = req.query.hasOwnProperty('estado') ? req.query.estado == 'true' : true;
+  console.log("estado", estado);
 
   try {
 
-    let usuarios = await Usuario.find()
+    let usuarios = await Usuario.find({estado}, 'nombre img role estado')
     .skip(desde)
     .limit(limite)
     .exec();
 
+    let conteo = await Usuario.count({estado});
+
     res.json({
       ok: true,
-      usuario: usuarios
+      usuario: usuarios,
+      cuantos: conteo
     });
 
   } catch (error) {
     res.status(400).json({
       ok: false,
-      err
+      error
     });
   }
 
@@ -47,10 +52,10 @@ app.post('/usuario', async (req, res) => {
       ok: true,
       usuario: resp
     });
-  }catch(err){
+  }catch(error){
     res.status(400).json({
       ok: false,
-      err
+      error
     });
   }
 
@@ -85,6 +90,37 @@ app.put('/usuario/:id', async (req, res) => {
 
   res.end();
   
+});
+
+app.delete('/usuario/:id', async (req, res) => {
+
+  let id = req.params.id;
+
+  try {
+    let usuarioBorrado = await Usuario.findByIdAndUpdate(
+      id, 
+      { estado: false },
+      { new: true, }
+    );
+    if(!usuarioBorrado){
+      res.status(400).json({
+        ok: false,
+        error: {
+          message: 'Usuario no encontrado'
+        }
+      });
+    }
+    res.json({
+      ok: true,
+      usuario: usuarioBorrado
+    });
+  } catch (error) {
+    res.status(400).json({
+      ok: false,
+      error
+    });
+  }
+
 });
  
 app.delete('/usuario/:id', (req, res) => {

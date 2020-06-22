@@ -4,9 +4,13 @@ const express = require('express');
 
 const app = express();
 
-const uri = 'mongodb://localhost:27017/cafe';
+const uri = process.env.URLDB;
 
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(uri, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true, 
+  useCreateIndex: true 
+});
 mongoose.createConnection(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.json());
