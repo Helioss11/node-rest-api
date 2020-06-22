@@ -15,7 +15,9 @@ mongoose.createConnection(uri, { useNewUrlParser: true, useUnifiedTopology: true
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(require('./routes/usuario'));
+
+// global routes config
+app.use(require('./routes/index'));
 
 app.listen(process.env.PORT, () => {
   console.log(`Escuchando en el puerto: ${process.env.PORT}`);

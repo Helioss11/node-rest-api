@@ -1,15 +1,16 @@
 const express = require('express');
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
+const { verificaToken, validateRole } = require('../middlewares/auth');
 
 const app = express();
 
-app.get('/usuario', async (req, res) => {
+app.get('/usuario', verificaToken, async (req, res) => {
   
   let desde = parseInt(req.query.desde) || 0;
   let limite = parseInt(req.query.limite) || 5;
-  let estado = req.query.hasOwnProperty('estado') ? req.query.estado == 'true' : true;
-  console.log("estado", estado);
+  let estado = req.query.hasOwnProperty('estado') ? 
+  req.query.estado == 'true' : true;
 
   try {
 
@@ -35,7 +36,7 @@ app.get('/usuario', async (req, res) => {
 
 });
 
-app.post('/usuario', async (req, res) => {
+app.post('/usuario', [verificaToken, validateRole], async (req, res) => {
   
   let body = req.body;
 
@@ -63,12 +64,11 @@ app.post('/usuario', async (req, res) => {
 
 });
  
-app.put('/usuario/:id', async (req, res) => {
+app.put('/usuario/:id', [verificaToken, validateRole], async (req, res) => {
   
   let id = req.params.id;
   let { nombre, img, role, estado } = req.body;
   let body = { nombre, img, role, estado };
-  console.log('body', body);
 
   try {
     
@@ -92,7 +92,7 @@ app.put('/usuario/:id', async (req, res) => {
   
 });
 
-app.delete('/usuario/:id', async (req, res) => {
+app.delete('/usuario/:id', [verificaToken, validateRole], async (req, res) => {
 
   let id = req.params.id;
 
